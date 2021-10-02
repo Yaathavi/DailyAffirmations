@@ -3,7 +3,7 @@ const pool = require("../db");
 const bcrypt = require("bcrypt");
 const jwtGenerator = require("../utils/jwtGenerator");
 
-//registering
+//register route
 router.post("/register", async (req, res) => {
   try {
     // destructure the req.body (name, email, password)
@@ -31,6 +31,39 @@ router.post("/register", async (req, res) => {
 
     //generating our jwt token
     const token = jwtGenerator(newUser.rows[0].user_id);
+    res.json({ token });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+//login route
+router.post("/login", async (req, res) => {
+  try {
+    // destructure req.body
+
+    const { email, password } = req.body;
+
+    // check if user exists and throw error if it doesn't
+
+    const user = await pool.query("SELECT * FROM users WHERE user_email = $1", [
+      email,
+    ]);
+
+    if (user.rows.length === 0) {
+      return res.status(401).json("Password or email is incorrect");
+    }
+    // if user exists, check if the password they entered matches the password for that email in the db
+    const validPassword = await bcrypt.compare(
+      password,
+      user.rows[0].user_password
+    );
+    if (!validPassword) {
+      return res.status(401).json("Password or email is incorrect");
+    }
+    // give them a jwt token
+    const token = jwtGenerator(user.rows[0].user_id);
     res.json({ token });
   } catch (err) {
     console.log(err.message);
