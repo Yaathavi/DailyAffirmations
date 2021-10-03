@@ -11,6 +11,9 @@ app.use(express.json()); //any time u want to access data from client side, this
 
 app.use("/auth", require("./routes/jwtAuth"));
 
+// homepage route
+app.use("/home", require("./routes/home"));
+
 app.listen(5000, () => {
   console.log("server is up and listening on port", 5000);
 });
