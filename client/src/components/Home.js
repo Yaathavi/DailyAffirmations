@@ -15,15 +15,16 @@ const Home = ({ setAuth }) => {
       console.log(err.mesage);
     }
   }
-
   const logout = (e) => {
     e.preventDefault();
     localStorage.removeItem("token");
     setAuth(false);
   };
+
   useEffect(() => {
     getName();
-  });
+  }, []);
+
   return (
     <Fragment>
       <h1>Home</h1>
