@@ -8,7 +8,6 @@ const authorization = require("../middleware/authorization");
 //register route
 router.post("/register", validInfo, async (req, res) => {
   try {
-    // destructure the req.body (name, email, password)
     const { name, email, password } = req.body;
 
     // check is user exists (if it does, throw error)
@@ -31,7 +30,7 @@ router.post("/register", validInfo, async (req, res) => {
       [name, email, bcryptPassword]
     );
 
-    //generating our jwt token
+    //generate jwt token
     const token = jwtGenerator(newUser.rows[0].user_id);
     res.json({ token });
   } catch (err) {
