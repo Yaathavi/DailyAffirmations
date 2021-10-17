@@ -3,12 +3,35 @@ import { AuthContext } from "../helpers/AuthContext";
 import { React, useState, useContext, useEffect } from "react";
 import Header from "../components/Header";
 import Header2 from "../components/Header2";
+import Quotes from "../components/Quotes";
 
 const Home = () => {
   const [name, setName] = useState("");
-  let history = useHistory();
+
   const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
 
+  const checkAuthenticated = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/auth/is-verified", {
+        method: "GET",
+        headers: { token: localStorage.token },
+      });
+      const parseRes = await res.json();
+      console.log("parseRes", parseRes);
+
+      if (parseRes === true) {
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+      }
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  useEffect(() => {
+    checkAuthenticated();
+  });
   const getProfile = async () => {
     try {
       const res = await fetch("http://localhost:5000/home/", {
@@ -27,15 +50,12 @@ const Home = () => {
     getProfile();
   }, []);
 
-  if (isAuthenticated) {
-    console.log("hi");
-  } else {
-  }
-
   return (
-    <div>
+    <div className="bg-blue-200 h-screen">
       <Header2 />
-      <h2>Welcome {name}</h2>
+      <div className="flex flex-col items-center justify-center">
+        <Quotes />
+      </div>
     </div>
   );
 };
